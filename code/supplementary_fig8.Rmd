@@ -1,0 +1,191 @@
+---
+title: "Geographic comparison between Paranoia Study recruitment and CloudResearch recruitment"
+author: "Praveen Suthaharan"
+date: "1/14/2021"
+output: html_document
+---
+
+## Load libraries
+
+```{r setup, include=FALSE}
+# install.packages("DT")
+# install.packages("rpivotTable")
+# install.packages("ggplot2")
+# install.packages("plotly")
+# install.packages("openintro")
+# install.packages("highcharter")
+# install.packages("ggvis")
+# install.packages("lessR")
+# install.packages("rstatix")
+
+library(flexdashboard)
+library(knitr)
+library(DT)
+library(rpivotTable)
+library(ggplot2)
+library(plotly)
+#library(dplyr)
+library(openintro)
+library(highcharter)
+#library(ggvis)
+require(gridExtra)
+library(grid)
+library(png)
+library(lessR)
+library(ggpubr)
+library(plyr)
+```
+
+## Load data
+
+
+```{r}
+pandemic <- read.csv('C:/Pandemic_2020/modelDB/data/pandemic.csv')
+pandemic.CR <- read.csv('C:/Pandemic_2020/modelDB/data/Figure7_pandemic_cloudresearch.csv')
+```
+
+## Geographic map analysis of Paranoia Study
+
+
+```{r}
+## Paranoia study
+# summarize data into proportions of individuals recruited per pandemic period per state
+df.states <- ddply(pandemic, .(Period), summarise,
+                   perc=prop.table(table(State))*100,
+                   State=names(table(State)))
+# convert state abbreviations into full names
+df.states$State <- abbr2state(df.states$State)
+
+# subset data into pandemic group
+df.states.pre <- df.states[which(df.states$period == "Pre-lockdown"),]
+df.states.lock <- df.states[which(df.states$period == "Lockdown"),]
+df.states.reopen <- df.states[which(df.states$period == "Reopening"),]
+
+
+# Map 1: US distribution of MTurkers recruited pre-pandemic
+highchart() %>%
+   hc_title(text = "Percentage of US MTurk completers") %>%
+   hc_subtitle(text = "Period: pre-pandemic") %>%
+   hc_add_series_map(usgeojson, df.states.pre,
+                     name = "State",
+                     value = "perc",
+                     joinBy = c("woename","State")) %>%
+   hc_colorAxis(minColor = "#B7FFBF", maxColor = "#00AB08") %>%
+   hc_mapNavigation(enabled=T)
+
+# Map 2: US distribution of MTurkers recruited during lockdown
+highchart() %>%
+   hc_title(text = "Percentage of US MTurk completers") %>%
+   hc_subtitle(text = "Period: lockdown") %>%
+   hc_add_series_map(usgeojson, df.states.lock,
+                     name = "State",
+                     value = "perc",
+                     joinBy = c("woename","State")) %>%
+   hc_colorAxis(minColor = "#B7FFBF", maxColor = "#00AB08") %>%
+   hc_mapNavigation(enabled=T)
+
+# Map 3: US distribution of MTurkers recruited during reopening
+highchart() %>%
+   hc_title(text = "Percentage of US MTurk completers") %>%
+   hc_subtitle(text = "Period: reopening") %>%
+   hc_add_series_map(usgeojson, df.states.reopen,
+                     name = "State",
+                     value = "perc",
+                     joinBy = c("woename","State")) %>%
+   hc_colorAxis(minColor = "#B7FFBF", maxColor = "#00AB08") %>%
+   hc_mapNavigation(enabled=T)
+
+```
+
+## Geographic map analysis of CloudResearch Study
+
+```{r}
+# convert state abbreviations into full names
+pandemic.CR$State <- abbr2state(pandemic.CR$state)
+
+# subset data into pandemic group
+pandemic.CR.pre <- pandemic.CR[which(pandemic.CR$period == "Pre-lockdown"),]
+pandemic.CR.lock <- pandemic.CR[which(pandemic.CR$period == "Lockdown"),]
+pandemic.CR.reopen <- pandemic.CR[which(pandemic.CR$period == "Reopening"),]
+
+# Map 1: US distribution of MTurkers recruited by CloudResearch during the pre-pandemic period
+highchart() %>%
+   hc_title(text = "Mean US MTurk completers") %>%
+   hc_subtitle(text = "Period: pre-pandemic") %>%
+   hc_add_series_map(usgeojson, pandemic.CR.pre,
+                     name = "State",
+                     value = "mean",
+                     joinBy = c("woename","State")) %>%
+   hc_mapNavigation(enabled=T)
+
+# Map 2: US distribution of MTurkers recruited by CloudResearch during the lockdown period
+highchart() %>%
+   hc_title(text = "Mean US MTurk completers") %>%
+   hc_subtitle(text = "Period: lockdown") %>%
+   hc_add_series_map(usgeojson, pandemic.CR.lock,
+                     name = "State",
+                     value = "mean",
+                     joinBy = c("woename","State")) %>%
+   hc_mapNavigation(enabled=T)
+
+# Map 3: US distribution of MTurkers recruited by CloudResearch during the reopening period
+highchart() %>%
+   hc_title(text = "Mean US MTurk completers") %>%
+   hc_subtitle(text = "Period: reopening") %>%
+   hc_add_series_map(usgeojson, pandemic.CR.reopen,
+                     name = "State",
+                     value = "mean",
+                     joinBy = c("woename","State")) %>%
+   hc_mapNavigation(enabled=T)
+
+```
+
+
+
+```{r}
+# Regional recruitment did not differ across our study periods
+df.region <- ddply(pandemic, .(Period), summarise,
+                   count=table(region),
+                   region=names(table(region)))
+
+pandemic$Period <- factor(pandemic$Period, levels = c("Pre-lockdown",
+                                                      "Lockdown",
+                                                      "Reopening"))
+
+df_state <- pandemic %>% dplyr::count(Period,State)
+
+# Region - Midwest
+ANOVA_state <- aov(df_state$n ~ df_state$Period)
+summary(ANOVA_state) # trend; p = 0.0554
+Anova(ANOVA_state, type = "II")
+
+
+# Count of US MTurkers per region; G1 = pre-lockdown
+G1_Mid=43
+G1_North=51
+G1_South=77
+G1_West=31
+
+# Count of US MTurkers per region; G2 = lockdown
+G2_Mid=48
+G2_North=51
+G2_South=87
+G2_West=45
+
+# Count of US MTurkers per region; G3 = reopening
+G3_Mid=32
+G3_North=32
+G3_South=65
+G3_West=43
+
+regionG = data.frame(G1 = c(G1_Mid,G1_North,G1_South,G1_West),
+                     G2 = c(G2_Mid,G2_North,G2_South,G2_West),
+                     G3 = c(G3_Mid,G3_North,G3_South,G3_West))
+
+rownames(regionG) <- c("Midwest","Northeast","South","West")
+colnames(regionG) <- c("Pre-lockdown","Lockdown","Reopening")
+regionG
+
+chisq.test(regionG, correct = F)
+```
+
