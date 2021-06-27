@@ -8,9 +8,9 @@ Questions about code/data? Please feel free to contact praveen.suthaharan@yale.e
 
 This directory includes:
 
-# Code
-# Data
-# Questionnaire
+Code
+Data
+Questionnaire
 
 The Code directory contains scripts for each of the main and supplementary figures found in the manuscript.
 
