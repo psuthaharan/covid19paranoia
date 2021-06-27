@@ -6,8 +6,6 @@ Praveen Suthaharan, Erin J. Reed, Pantelis Leptourgos, Joshua Kenney, Stefan Udd
 
 Questions about code/data? Please feel free to contact praveen.suthaharan@yale.edu
 
-This directory includes:
-
 The **Code** directory contains scripts for each of the main and supplementary figures found in the manuscript.
 
 The **Data** directory contains choice data for the HGF (hgfPRL) and qualtrics data (qualtricsPRL) for the analysis. External data can be sourced from references in the manuscript.
