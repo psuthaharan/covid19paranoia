@@ -2,9 +2,7 @@
 
 [Praveen Suthaharan, Erin J. Reed, Pantelis Leptourgos, Joshua Kenney, Stefan Uddenberg, Christoph D. Mathys, Leib Litman, Jonathan Robinson, Aaron J. Moss, Jane R. Taylor, Stephanie M. Groman, Philip R. Corlett*] (https://www.nature.com/articles/s41562-021-01176-8.pdf)
 
-See [Suthaharan, P., Corlett, P.R., & Ang, Y.S. (2021). Computational
-modeling of behavioral tasks: An illustration on a classic reinforcement
-learning paradigm](https://www.nature.com/articles/s41562-021-01176-8.pdf) for more detail.
+See [Praveen Suthaharan, Erin J. Reed, Pantelis Leptourgos, Joshua Kenney, Stefan Uddenberg, Christoph D. Mathys, Leib Litman, Jonathan Robinson, Aaron J. Moss, Jane R. Taylor, Stephanie M. Groman, Philip R. Corlett*](https://www.nature.com/articles/s41562-021-01176-8.pdf) for more detail.
 
 *Email: philip.corlett@yale.edu
 
