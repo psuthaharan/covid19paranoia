@@ -1,8 +1,6 @@
 ## Paranoia and belief updating during the COVID-19 crisis
 
-[Praveen Suthaharan, Erin J. Reed, Pantelis Leptourgos, Joshua Kenney, Stefan Uddenberg, Christoph D. Mathys, Leib Litman, Jonathan Robinson, Aaron J. Moss, Jane R. Taylor, Stephanie M. Groman, Philip R. Corlett*] (https://www.nature.com/articles/s41562-021-01176-8.pdf)
-
-See [Suthaharan, P., Reed, E. J., Leptourgos, P., Kenney, J. G., Uddenberg, S., Mathys, C. D., ... & Corlett, P. R.* (2021). Paranoia and belief updating during the COVID-19 crisis. Nature Human Behaviour, 5(9), 1190-1202.](https://www.nature.com/articles/s41562-021-01176-8.pdf) for more detail.
+See [Suthaharan, P., Reed, E. J., Leptourgos, P., Kenney, J. G., Uddenberg, S., Mathys, C. D., ... & Corlett*, P. R. (2021). Paranoia and belief updating during the COVID-19 crisis. Nature Human Behaviour, 5(9), 1190-1202.](https://www.nature.com/articles/s41562-021-01176-8.pdf) for more detail.
 
 *Email: philip.corlett@yale.edu
 
