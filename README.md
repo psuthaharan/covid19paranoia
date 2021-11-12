@@ -1,6 +1,6 @@
 ## Paranoia and belief updating during the COVID-19 crisis
 
-Praveen Suthaharan, Erin J. Reed, Pantelis Leptourgos, Joshua Kenney, Stefan Uddenberg, Christoph D. Mathys, Leib Litman, Jonathan Robinson, Aaron J. Moss, Jane R. Taylor, Stephanie M. Groman, Philip R. Corlett*
+[Praveen Suthaharan, Erin J. Reed, Pantelis Leptourgos, Joshua Kenney, Stefan Uddenberg, Christoph D. Mathys, Leib Litman, Jonathan Robinson, Aaron J. Moss, Jane R. Taylor, Stephanie M. Groman, Philip R. Corlett*] (https://www.nature.com/articles/s41562-021-01176-8.pdf)
 
 *Email: philip.corlett@yale.edu
 
