@@ -175,7 +175,7 @@ p2
 ### Visualization
 rm(list=ls())
 
-setwd("C:/Pandemic_2020/modelDB/data")
+setwd("C:/Pandemic_2020/revisions/data")
 
 library(dplyr)
 library(lessR)
@@ -186,24 +186,26 @@ library(plyr)
 
 
 # read data
-demo.pandemic <- read.csv("pandemic.csv")
-#demo.network <- read.csv("demographics_network.csv")
+dat <- read.csv("pandemicPRL.csv")
 
-#demo <- rbind(demo.psyarxiv,demo.network)
-demo.df <- data.frame(record_id = demo.pandemic$ï..Study.id,
-                      period = demo.pandemic$Period, 
-                      Age = demo.pandemic$Age,
-                      gender = demo.pandemic$Gender.1m2f,
-                      race = demo.pandemic$Race,
-                      income = demo.pandemic$Income)
+# subset for pandemic data
+dat_pandemic <- dat[which(dat$dataset == "elife2020" | dat$dataset == "pandemic"),] 
+
+
+demo.df <- data.frame(record_id = dat_pandemic$study_id,
+                      period = dat_pandemic$period, 
+                      Age = dat_pandemic$demo_2,
+                      gender = dat_pandemic$demo_1,
+                      race = dat_pandemic$demo_4,
+                      income = dat_pandemic$demo_7)
 
 demo.df$gender <- ifelse(demo.df$gender == "1",1,
                          ifelse(demo.df$gender == "2",2,
                                 ifelse(demo.df$gender == "Other","","")))
 
-demo.df$period <- factor(demo.df$period, levels = c("Pre-lockdown",
-                                                    "Lockdown",
-                                                    "Reopening"))
+demo.df$period <- factor(demo.df$period, levels = c("prelockdown",
+                                                    "lockdown",
+                                                    "postlockdown"))
 
 
 ANOVA1_age<- aov(demo.df$Age ~ demo.df$period)
@@ -218,9 +220,9 @@ ANOVA1_race<- aov(demo.df$race ~ demo.df$period)
 summary(ANOVA1_race)
 Anova(ANOVA1_race, type = "II")
 
-demo.df.pre <- demo.df[which(demo.df$period == "Pre-lockdown"),]
-demo.df.lock <- demo.df[which(demo.df$period == "Lockdown"),]
-demo.df.reopen <- demo.df[which(demo.df$period == "Reopening"),]
+demo.df.pre <- demo.df[which(demo.df$period == "prelockdown"),]
+demo.df.lock <- demo.df[which(demo.df$period == "lockdown"),]
+demo.df.reopen <- demo.df[which(demo.df$period == "postlockdown"),]
 
 
 ## GENDER
@@ -240,9 +242,7 @@ demo.df$genderLabel <- ifelse(demo.df$gender == 1, "Male",
                               ifelse(demo.df$gender == 2, "Female",
                                      ifelse(demo.df$gender == "Other","Other","")))
 
-demo.df.other <- demo.df[which(demo.df$genderLabel == "Other"),]
-
-demo.df <- demo.df[-c(as.numeric(rownames(demo.df.other))),]
+demo.df <- demo.df[-which(demo.df$genderLabel == ""),]
 
 
 # Statistics
@@ -357,48 +357,47 @@ ggplot(df, aes(x=Age, fill=period)) +
 
 ## RACE
 # Data prep
-demo.df$race.name <- ifelse(demo.df$race == 0, "Other",
-                            ifelse(demo.df$race == 1, "White",
+demo.df$race.name <- ifelse(demo.df$race == 1, "White",
                                    ifelse(demo.df$race == 2, "Black",
                                           ifelse(demo.df$race == 3, "Asian",
                                                  ifelse(demo.df$race == 4, "American Indian",
-                                                        ifelse(demo.df$race == 5, "Multiracial",""))))))
+                                                        ifelse(demo.df$race == 5, "Multiracial","")))))
 
-demo.df$race.name <- factor(demo.df$race.name, levels = c("Other","White","Black","Asian","American Indian","Multiracial"))
+demo.df$race.name <- factor(demo.df$race.name, levels = c("White","Black","Asian","American Indian","Multiracial"))
 
 
 # Statistics
 demo.df.prop <- ddply(demo.df, .(period), summarise,
                       prop = table(race),
-                      race = names(table(race.name)))
+                      income = names(table(race.name)))
 
-G1_O = 4
+#G1_O = 4
 G1_W = 161
 G1_B = 19
 G1_A = 8
 G1_Am = 2
 G1_M = 8
 
-G2_O = 6
+#G2_O = 6
 G2_W = 186
 G2_B = 25
 G2_A = 9
 G2_Am = 1
 G2_M = 4
 
-G3_O = 3
+#G3_O = 3
 G3_W = 137
 G3_B = 15
 G3_A = 7
 G3_Am = 5
 G3_M = 5
 
-raceG = data.frame(G1 = c(G1_O,G1_W,G1_B,G1_A,G1_Am,G1_M),
-                   G2 = c(G2_O,G2_W,G2_B,G2_A,G2_Am,G2_M),
-                   G3 = c(G3_O,G3_W,G3_B,G3_A,G3_Am,G3_M))
+raceG = data.frame(G1 = c(G1_W,G1_B,G1_A,G1_Am,G1_M),
+                   G2 = c(G2_W,G2_B,G2_A,G2_Am,G2_M),
+                   G3 = c(G3_W,G3_B,G3_A,G3_Am,G3_M))
 
-rownames(raceG) <- c("Other","White","Black","Asian","American Indian","Multiracial")
-colnames(raceG) <- c("Pre-lockdown","Lockdown","Reopening")
+rownames(raceG) <- c("White","Black","Asian","American Indian","Multiracial")
+colnames(raceG) <- c("prelockdown","lockdown","postlockdown")
 
 chisq.test(raceG, correct = F)
 
@@ -407,10 +406,10 @@ demo.df.perc <- ddply(demo.df, .(period), summarise,
                       percent = prop.table(table(race.name))*100,
                       race = names(table(race.name)))
 
-demo.df.perc$period <- factor(demo.df.perc$period, levels = c("Reopening","Lockdown","Pre-lockdown"))
+demo.df.perc$period <- factor(demo.df.perc$period, levels = c("postlockdown","lockdown","prelockdown"))
 
 ggplot(demo.df.perc, aes(x = period, y = percent)) +
-  geom_col(aes(fill = race), width = 0.4) + coord_flip() +  scale_fill_manual("",values = c("#9897A8","#E9B606","#E97E06","#069010","#082465","#5595D4")#, 
+  geom_col(aes(fill = race), width = 0.4) + coord_flip() +  scale_fill_manual("",values = c("#9897A8","#E9B606","#E97E06","#069010","#5595D4")#, 
                                                                               #labels = c("Pre-lockdown",
                                                                               #           "Lockdown",
                                                                               #           "Reopening")

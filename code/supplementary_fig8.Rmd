@@ -40,8 +40,8 @@ library(plyr)
 
 
 ```{r}
-pandemic <- read.csv('C:/Pandemic_2020/modelDB/data/pandemic.csv')
-pandemic.CR <- read.csv('C:/Pandemic_2020/modelDB/data/Figure7_pandemic_cloudresearch.csv')
+dat <- read.csv('C:/Pandemic_2020/revisions/data/pandemicPRL.csv')
+pandemic.CR <- read.csv('C:/Pandemic_2020/revisions/data/cloudresearch.csv')
 ```
 
 ## Geographic map analysis of Paranoia Study
@@ -50,16 +50,23 @@ pandemic.CR <- read.csv('C:/Pandemic_2020/modelDB/data/Figure7_pandemic_cloudres
 ```{r}
 ## Paranoia study
 # summarize data into proportions of individuals recruited per pandemic period per state
-df.states <- ddply(pandemic, .(Period), summarise,
-                   perc=prop.table(table(State))*100,
-                   State=names(table(State)))
+
+# subset for pandemic data
+pandemic <- dat[which(dat$dataset == "elife2020" | dat$dataset == "pandemic"),] 
+pandemic$period <- factor(pandemic$period, levels = c("prelockdown",
+                                                      "lockdown",
+                                                      "postlockdown"))
+
+df.states <- ddply(pandemic, .(period), summarise,
+                   perc=prop.table(table(state))*100,
+                   State=names(table(state)))
 # convert state abbreviations into full names
 df.states$State <- abbr2state(df.states$State)
 
 # subset data into pandemic group
-df.states.pre <- df.states[which(df.states$period == "Pre-lockdown"),]
-df.states.lock <- df.states[which(df.states$period == "Lockdown"),]
-df.states.reopen <- df.states[which(df.states$period == "Reopening"),]
+df.states.pre <- df.states[which(df.states$period == "prelockdown"),]
+df.states.lock <- df.states[which(df.states$period == "lockdown"),]
+df.states.reopen <- df.states[which(df.states$period == "postlockdown"),]
 
 
 # Map 1: US distribution of MTurkers recruited pre-pandemic
@@ -104,9 +111,9 @@ highchart() %>%
 pandemic.CR$State <- abbr2state(pandemic.CR$state)
 
 # subset data into pandemic group
-pandemic.CR.pre <- pandemic.CR[which(pandemic.CR$period == "Pre-lockdown"),]
-pandemic.CR.lock <- pandemic.CR[which(pandemic.CR$period == "Lockdown"),]
-pandemic.CR.reopen <- pandemic.CR[which(pandemic.CR$period == "Reopening"),]
+pandemic.CR.pre <- pandemic.CR[which(pandemic.CR$period == "prelockdown"),]
+pandemic.CR.lock <- pandemic.CR[which(pandemic.CR$period == "lockdown"),]
+pandemic.CR.reopen <- pandemic.CR[which(pandemic.CR$period == "postlockdown"),]
 
 # Map 1: US distribution of MTurkers recruited by CloudResearch during the pre-pandemic period
 highchart() %>%
@@ -144,18 +151,18 @@ highchart() %>%
 
 ```{r}
 # Regional recruitment did not differ across our study periods
-df.region <- ddply(pandemic, .(Period), summarise,
+df.region <- ddply(pandemic, .(period), summarise,
                    count=table(region),
                    region=names(table(region)))
 
-pandemic$Period <- factor(pandemic$Period, levels = c("Pre-lockdown",
-                                                      "Lockdown",
-                                                      "Reopening"))
+df.region$period <- factor(df.region$period, levels = c("prelockdown",
+                                                      "lockdown",
+                                                      "postlockdown"))
 
-df_state <- pandemic %>% dplyr::count(Period,State)
+df_state <- pandemic %>% dplyr::count(period,state)
 
 # Region - Midwest
-ANOVA_state <- aov(df_state$n ~ df_state$Period)
+ANOVA_state <- aov(df_state$n ~ df_state$period)
 summary(ANOVA_state) # trend; p = 0.0554
 Anova(ANOVA_state, type = "II")
 
